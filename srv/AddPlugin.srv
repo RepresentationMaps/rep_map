@@ -1,0 +1,6 @@
+string plugin_name
+string[] agents
+string[] map_names
+
+---
+bool result

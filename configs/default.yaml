@@ -1,0 +1,3 @@
+plugins: ["SimpleFacesPlugin",
+          "AgentsGazePlugin",
+          "ObjectDetection3DPlugin"]

@@ -1,0 +1,57 @@
+<launch>
+	
+	<arg name="use_sim_time" default="false"/>
+
+	<arg name="compute_score" default="false"/>
+	<arg name="k_top" default="1"/>
+	<arg name="target_mask_topic" default="/gaze/target/mask"/>
+
+	<arg name="classes_path" default=""/>
+	<arg name="use_depth" default="false"/>
+	<arg name="plugin_config" default="$(find rep_map)/configs/default.yaml"/>
+	<arg name="threaded" default="false"/>
+
+	<arg name="rgb_camera" default="/camera/color/"/>
+    <arg name="rgb_camera_topic" default="$(arg rgb_camera)/image_raw"/>
+    <arg name="rgb_camera_info" default="$(arg rgb_camera)/camera_info"/>
+
+    <arg name="depth_camera" default="/camera/depth/"/>
+    <arg name="depth_camera_topic" default="$(arg rgb_camera)/image_raw"/>
+    <arg name="depth_camera_info" default="$(arg rgb_camera)/camera_info"/>
+
+    <arg name="optical_flow_image" default="$(arg rgb_camera_topic)"/>
+    <arg name="optical_flow_camera_info" default="$(arg rgb_camera_info)"/>
+
+    <arg name="ref_frame" default="camera_link"/>
+    <arg name="fixed_frame" default="map"/>
+    <arg name="faces_root_frame" default="camera_color_optical_frame"/>
+    
+	<!-- Setting generic parameters -->
+	<param name="/use_sim_time" value="$(arg use_sim_time)" type="bool"/>
+
+	<!-- Setting rep map parameters -->
+	<param name="/rep_map/config_file" value="$(arg plugin_config)" type="str"/>
+	<param name="/rep_map/compute_score" value="$(arg compute_score)" type="bool"/>
+
+	<!-- Setting rep_plugins parameters -->
+	<param name="/rep_plugins/object_detection/classes_path" value="$(arg classes_path)" type="str"/>
+	<param name="/rep_plugins/object_detection/use_depth" value="$(arg use_depth)" type="bool"/>
+	<param name="/rep_plugins/faces_root_frame" value="$(arg faces_root_frame)" type="str"/>
+	<param name="/rep_plugins/threaded" value="$(arg threaded)" type="bool"/>
+
+	<node pkg="rep_plugins" name="context_republisher" type="context_republisher" output="screen"/>
+
+	<node pkg="rep_map" name="rep_map" type="rep_map_node" output="screen">
+        <param name="ref_frame" value="$(arg ref_frame)"/>
+        <param name="fixed_frame" value="$(arg fixed_frame)"/>
+        <param name="k_top" value="$(arg k_top)"/>
+        <remap from="optical_flow_image" to="$(arg optical_flow_image)"/>
+        <remap from="optical_flow_camera_info" to="$(arg optical_flow_camera_info)"/>
+        <remap from="rgb_camera_info" to="$(arg rgb_camera_info)"/>
+        <remap from="depth_camera_info" to="$(arg depth_camera_info)"/>
+        <remap from="/gaze/target/mask" to="$(arg target_mask_topic)"/>
+    </node>
+
+    <node type="rviz" name="rviz_maps" pkg="rviz" args="-d $(find rep_map)/rviz/default.rviz" output="screen"/>
+
+</launch>
