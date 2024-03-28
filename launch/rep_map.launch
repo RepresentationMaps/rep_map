@@ -1,10 +1,4 @@
 <launch>
-	
-	<arg name="use_sim_time" default="false"/>
-
-	<arg name="compute_score" default="false"/>
-	<arg name="k_top" default="1"/>
-	<arg name="target_mask_topic" default="/gaze/target/mask"/>
 
 	<arg name="classes_path" default=""/>
 	<arg name="use_depth" default="false"/>
@@ -31,7 +25,6 @@
 
 	<!-- Setting rep map parameters -->
 	<param name="/rep_map/config_file" value="$(arg plugin_config)" type="str"/>
-	<param name="/rep_map/compute_score" value="$(arg compute_score)" type="bool"/>
 
 	<!-- Setting rep_plugins parameters -->
 	<param name="/rep_plugins/object_detection/classes_path" value="$(arg classes_path)" type="str"/>
@@ -44,14 +37,10 @@
 	<node pkg="rep_map" name="rep_map" type="rep_map_node" output="screen">
         <param name="ref_frame" value="$(arg ref_frame)"/>
         <param name="fixed_frame" value="$(arg fixed_frame)"/>
-        <param name="k_top" value="$(arg k_top)"/>
         <remap from="optical_flow_image" to="$(arg optical_flow_image)"/>
         <remap from="optical_flow_camera_info" to="$(arg optical_flow_camera_info)"/>
         <remap from="rgb_camera_info" to="$(arg rgb_camera_info)"/>
         <remap from="depth_camera_info" to="$(arg depth_camera_info)"/>
-        <remap from="/gaze/target/mask" to="$(arg target_mask_topic)"/>
     </node>
-
-    <node type="rviz" name="rviz_maps" pkg="rviz" args="-d $(find rep_map)/rviz/default.rviz" output="screen"/>
 
 </launch>
